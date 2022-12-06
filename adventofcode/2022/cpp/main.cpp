@@ -2,6 +2,57 @@
 #include <fstream>
 using namespace std;
 
+int assignment_3_2()
+{
+	ifstream f("day3.txt");
+	int sum = 0;
+	while (!f.eof())
+	{
+		string line1, line2, line3;
+		bool found = false;
+		f >> line1 >> line2 >> line3;
+		for (size_t i = 0; i < line1.size() && !found; i++)
+		{
+			for (size_t j = 0; j < line2.size() && !found; j++)
+			{
+				for (size_t k = 0; k < line3.size() && !found; k++)
+				{
+					if (line1[i] == line2[j] && line1[i] == line3[k])
+					{
+						sum += isupper(line1[i]) ? line1[i] - 'A' + 27 : line1[i] - 'a' + 1;
+						found = true;
+					}
+				}
+			}
+		}
+	}
+	return sum;
+}
+
+int assignment_3_1()
+{
+	ifstream f("day3.txt");
+	int sum = 0;
+	while (!f.eof())
+	{
+		string line;
+		bool found = false;
+		f >> line;
+		for (size_t i = 0; i < line.size() / 2 && !found; i++)
+		{
+			for (size_t j = line.size() / 2; j < line.size() && !found; j++)
+			{
+				if (line[i] == line[j])
+				{
+					sum += isupper(line[i]) ? line[i] - 'A' + 27 : line[i] - 'a' + 1;
+					found = true;
+				}
+			}
+		}
+	}
+	return sum;
+}
+
 int assignment_2_2()
 {
 	ifstream f("day2.txt");
@@ -91,5 +142,7 @@ int main()
 	cout << assignment_1() << endl;
 	cout << assignment_2_1() << endl;
 	cout << assignment_2_2() << endl;
+	cout << assignment_3_1() << endl;
+	cout << assignment_3_2() << endl;
 	return 0;
 }
