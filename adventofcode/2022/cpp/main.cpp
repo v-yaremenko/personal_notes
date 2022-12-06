@@ -1,6 +1,47 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 using namespace std;
+
+int assignment_4_2()
+{
+	ifstream f("day4.txt");
+	int sum = 0;
+	while (!f.eof())
+	{
+		string line;
+		f >> line; // x-y,k-z format
+		int x, y, k, z;
+		char temp;
+		istringstream(line) >> x >> temp >> y >> temp >> k >> temp >> z;
+
+		if (x <= k && y >= z || k <= x && z >= y || x <= k && y >= k || x <= z && y >= z)
+		{
+			sum++;
+		}
+	}
+	return sum;
+}
+
+int assignment_4_1()
+{
+	ifstream f("day4.txt");
+	int sum = 0;
+	while (!f.eof())
+	{
+		string line;
+		f >> line; // x-y,k-z format
+		int x, y, k, z;
+		char temp;
+		istringstream(line) >> x >> temp >> y >> temp >> k >> temp >> z;
+
+		if (x <= k && y >= z || k <= x && z >= y)
+		{
+			sum++;
+		}
+	}
+	return sum;
+}
 
 int assignment_3_2()
 {
@@ -144,5 +185,7 @@ int main()
 	cout << assignment_2_2() << endl;
 	cout << assignment_3_1() << endl;
 	cout << assignment_3_2() << endl;
+	cout << assignment_4_1() << endl;
+	cout << assignment_4_2() << endl;
 	return 0;
 }
