@@ -1,7 +1,106 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <stack>
 using namespace std;
+
+int assignment_5(bool mode_5_2 = false)
+{
+	ifstream f("day5.txt");
+	int sum = 0;
+
+	vector<stack<char>> container;
+	vector<stack<char>> temp;
+	temp.resize(10);
+	container.resize(10);
+
+	while (!f.eof())
+	{
+		string line;
+		getline(f, line);
+		int index = 0;
+
+		if (line.find("1   2   3   4   5   6   7   8   9") != string::npos)
+		{
+			getline(f, line);
+			break;
+		}
+
+		for (int i = 0; i < line.size(); i++)
+		{
+			if (line[i] == '[')
+			{
+				temp[index].push(line[i + 1]);
+				index++;
+			}
+			else if (line[i] == ' ')
+			{
+				if (i < line.size())
+				{
+					if (line[i + 1] == ' ')
+					{
+						i += 3;
+						index++;
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < temp.size(); i++)
+	{
+		while (temp[i].size() > 0)
+		{
+			container[i].push(temp[i].top());
+			temp[i].pop();
+		}
+	}
+
+	while (!f.eof())
+	{
+		string temp;
+		int count = 0;
+		int from = 0;
+		int to = 0;
+
+		string line;
+		getline(f, line);
+		istringstream(line) >> temp >> count >> temp >> from >> temp >> to;
+
+		// match 0..8 iteration
+		from--;
+		to--;
+
+		if (mode_5_2)
+		{
+			stack<char> stack_to_rearrange;
+			while (count > 0)
+			{
+				stack_to_rearrange.push(container[from].top());
+				container[from].pop();
+				count--;
+			}
+
+			while (stack_to_rearrange.size() > 0)
+			{
+				container[to].push(stack_to_rearrange.top());
+				stack_to_rearrange.pop();
+			}
+		}
+		else
+		{
+			while (count > 0)
+			{
+				container[to].push(container[from].top());
+				container[from].pop();
+				count--;
+			}
+		}
+	}
+	
+	return sum;
+}
 
 int assignment_4_2()
 {
@@ -187,5 +286,8 @@ int main()
 	cout << assignment_3_2() << endl;
 	cout << assignment_4_1() << endl;
 	cout << assignment_4_2() << endl;
+	cout << assignment_5() << endl; // 5_1
+	cout << assignment_5(true) << endl; // 5_2
+
 	return 0;
 }
