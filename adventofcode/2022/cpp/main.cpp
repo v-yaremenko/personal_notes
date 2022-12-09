@@ -3,7 +3,40 @@
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <list>
 using namespace std;
+
+int assignment_6(const int N)
+{
+	ifstream f("day6.txt");
+	int num = 0;
+
+	list<char> lst;
+
+	while (!f.eof())
+	{
+		char c;
+		f >> c;
+		for (list<char>::iterator it = lst.begin(); it != lst.end(); ++it)
+		{
+			if (*it == c)
+			{
+				lst.erase(lst.begin(), it);
+				lst.erase(it);
+				break;
+			}
+		}
+		lst.push_back(c);
+
+		num++;
+		if (lst.size() == N)
+		{
+			return num;
+		}
+	}
+
+	return num;
+}
 
 int assignment_5(bool mode_5_2 = false)
 {
@@ -288,6 +321,8 @@ int main()
 	cout << assignment_4_2() << endl;
 	cout << assignment_5() << endl; // 5_1
 	cout << assignment_5(true) << endl; // 5_2
+	cout << assignment_6(4) << endl;
+	cout << assignment_6(14) << endl;
 
 	return 0;
 }
