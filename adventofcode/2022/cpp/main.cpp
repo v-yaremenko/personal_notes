@@ -6,6 +6,212 @@
 #include <list>
 using namespace std;
 
+int assignment_8_2()
+{
+	struct Node
+	{
+		int heigh = 0;
+		bool visible = false;
+	};
+
+	vector<vector<Node>> map;
+	ifstream f("day8.txt");
+	string s;
+
+	int row = 0;
+
+	while (!f.eof())
+	{
+		f >> s;
+		map.push_back(vector<Node>());
+		for (char c : s)
+		{
+			map[row].push_back({ static_cast<int>(c) - '0', false });
+		}
+		row++;
+	}
+
+	int max = 0;
+	int field_size = map.size();
+
+	for (int i = 1; i < field_size - 1; i++)
+	{
+		for (int j = 1; j < field_size - 1; j++)
+		{
+			int current_heigh = map[i][j].heigh;
+			// Go UP
+			int up = 0;
+			for(int k = i - 1; k >= 0; k--)
+			{
+				up++;
+				if (map[k][j].heigh >= current_heigh)
+				{
+					break;
+				}
+			}
+			
+			// Go DOWN
+			int down = 0;
+			for (int k = i + 1; k < field_size; k++)
+			{
+				down++;
+				if (map[k][j].heigh >= current_heigh)
+				{
+					break;
+				}
+			}
+
+			// Go LEFT
+			int left = 0;
+			for (int k = j - 1; k >= 0; k--)
+			{
+				left++;
+				if (map[i][k].heigh >= current_heigh)
+				{
+					break;
+				}
+			}
+
+			// Go RIGHT
+			int right = 0;
+			for (int k = j + 1; k < field_size; k++)
+			{
+				right++;
+				if (map[i][k].heigh >= current_heigh)
+				{
+					break;
+				}
+			}
+
+			if (up * down * left * right > max)
+			{
+				max = up * down * left * right;
+			}
+		}
+	}
+
+	return max;
+}
+
+int assignment_8_1()
+{
+	struct Node
+	{
+		int heigh = 0;
+		bool visible = false;
+	};
+
+	vector<vector<Node>> map;
+	ifstream f("day8.txt");
+	string s;
+
+	int row = 0;
+
+	while (!f.eof())
+	{
+		f >> s;
+		map.push_back(vector<Node>());
+		for (char c : s)
+		{
+			map[row].push_back({ static_cast<int>(c) - '0', false });
+		}
+		row++;
+	}
+
+	int field_size = map.size();
+	int visible_num = 4 * field_size - 4;
+
+	for (int i = 1; i < field_size - 1; i++)
+	{
+		int current_heigh = map[i][0].heigh;
+		for (int j = 1; j < field_size - 1; j++)
+		{
+			if (map[i][j].heigh > current_heigh)
+			{
+				if (!map[i][j].visible)
+				{
+					visible_num++;
+					map[i][j].visible = true;
+				}
+				current_heigh = map[i][j].heigh;
+			}
+
+			if (current_heigh == 9)
+			{
+				break;
+			}
+		}
+	}
+
+	for (int i = 1; i < field_size - 1; i++)
+	{
+		int current_heigh = map[0][i].heigh;
+		for (int j = 1; j < field_size - 1; j++)
+		{
+			if (map[j][i].heigh > current_heigh)
+			{
+				if (!map[j][i].visible)
+				{
+					visible_num++;
+					map[j][i].visible = true;
+				}
+				current_heigh = map[j][i].heigh;
+			}
+
+			if (current_heigh == 9)
+			{
+				break;
+			}
+		}
+	}
+
+	for (int i = 1; i < field_size - 1; i++)
+	{
+		int current_heigh = map[i][field_size - 1].heigh;
+		for (int j = field_size - 2; j > 0; j--)
+		{
+			if (map[i][j].heigh > current_heigh)
+			{
+				if (!map[i][j].visible)
+				{
+					visible_num++;
+					map[i][j].visible = true;
+				}
+				current_heigh = map[i][j].heigh;
+			}
+
+			if (current_heigh == 9)
+			{
+				break;
+			}
+		}
+	}
+
+	for (int i = 1; i < field_size - 1; i++)
+	{
+		int current_heigh = map[field_size - 1][i].heigh;
+		for (int j = field_size - 2; j > 0; j--)
+		{
+			if (map[j][i].heigh > current_heigh)
+			{
+				if (!map[j][i].visible)
+				{
+					visible_num++;
+					map[j][i].visible = true;
+				}
+				current_heigh = map[j][i].heigh;
+			}
+
+			if (current_heigh == 9)
+			{
+				break;
+			}
+		}
+	}
+
+	return visible_num;
+}
+
 // Assignment 7
 
 struct Node
@@ -456,8 +662,10 @@ int main()
 	cout << assignment_5(true) << endl; // 5_2
 	cout << assignment_6(4) << endl;
 	cout << assignment_6(14) << endl;
-	cout << assignment_7() << endl;
-	cout << assignment_7(true) << endl;
+	cout << assignment_7() << endl; // 7_1
+	cout << assignment_7(true) << endl; // 7_2
+	cout << assignment_8_1() << endl;
+	cout << assignment_8_2() << endl;
 
 	return 0;
 }
