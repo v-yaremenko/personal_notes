@@ -6,6 +6,139 @@
 #include <list>
 using namespace std;
 
+// Assignment 7
+
+struct Node
+{
+	enum class Type
+	{
+		DIR = 0,
+		FILE = 1
+	};
+
+	int size;
+	Type type;
+	string name;
+	Node* parent;
+	list<Node> child;
+};
+
+int calculate_size(Node* current)
+{
+	for (auto& node : current->child)
+	{
+		if (node.type == Node::Type::DIR)
+		{
+			current->size += calculate_size(&node);
+		}
+		else
+		{
+			current->size += node.size;
+		}
+	}
+	return current->size;
+}
+
+int assignment_7_1_find_answer(Node* current)
+{
+	int answer = current->size > 100000 ? 0 : current->size;
+	for (auto& node : current->child)
+	{
+		if (node.type == Node::Type::DIR)
+		{
+			answer += assignment_7_1_find_answer(&node);
+		}
+	}
+	return answer;
+}
+
+// Need to find the smallest directory with that can be deleted to free enough space
+int assignment_7_2_find_answer(Node* current, int needed_size, int smallest_directory_size)
+{
+	if (current->size >= needed_size && current->size < smallest_directory_size)
+	{
+		smallest_directory_size = current->size;
+	}
+
+	for (auto& node : current->child)
+	{
+		if (node.type == Node::Type::DIR)
+		{
+			smallest_directory_size = assignment_7_2_find_answer(&node, needed_size, smallest_directory_size);
+		}
+	}
+
+	return smallest_directory_size;
+}
+
+int assignment_7(bool mode_7_2 = false)
+{
+	ifstream f("day7.txt");
+
+	Node root{ 0, Node::Type::DIR, "/", nullptr };
+	Node* current = &root;
+
+	string s;
+
+	while (!f.eof())
+	{
+		f >> s;
+
+		if (s == "$")
+		{
+			continue;
+		}
+		else if (s == "ls")
+		{
+			while (!f.eof())
+			{
+				f >> s;
+				if (s == "dir")
+				{
+					f >> s;
+					current->child.push_back({ 0, Node::Type::DIR, s, current });
+				}
+				else if (s == "$")
+				{
+					break;
+				}
+				else if (!f.eof())
+				{
+					int size = stoi(s);
+					f >> s;
+					current->child.push_back({ size, Node::Type::FILE, s, current });
+				}
+			}
+		}
+		else if (s == "cd")
+		{
+			f >> s;
+			if (s == "..")
+			{
+				if (current->parent != nullptr)
+				{
+					current = current->parent;
+				}
+			}
+			else
+			{
+				for (Node& child : current->child)
+				{
+					if (child.name == s)
+					{
+						current = &child;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	calculate_size(&root);
+	int ans = mode_7_2 ? assignment_7_2_find_answer(&root, 30000000 - (70000000 - root.size), 70000000) : assignment_7_1_find_answer(&root);
+	return ans;
+}
+
 int assignment_6(const int N)
 {
 	ifstream f("day6.txt");
@@ -323,6 +456,8 @@ int main()
 	cout << assignment_5(true) << endl; // 5_2
 	cout << assignment_6(4) << endl;
 	cout << assignment_6(14) << endl;
+	cout << assignment_7() << endl;
+	cout << assignment_7(true) << endl;
 
 	return 0;
 }
