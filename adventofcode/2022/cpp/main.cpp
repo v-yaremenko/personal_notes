@@ -4,7 +4,234 @@
 #include <vector>
 #include <stack>
 #include <list>
+#include <set>
 using namespace std;
+
+int assignment_9()
+{
+	enum class Position
+	{
+		SAME_CELL = 0,
+		TAIL_RIGHT,
+		TAIL_RIGHT_UP,
+		TAIL_UP,
+		TAIL_LEFT_UP,
+		TAIL_LEFT,
+		TAIL_LEFT_DOWN,
+		TAIL_DOWN,
+		TAIL_DOWN_RIGHT
+	};
+
+	struct Point
+	{
+		int x;
+		int y;
+
+		bool operator<(const Point& p) const
+		{
+			return (x < p.x) || ((!(p.x < x)) && (y < p.y));
+		}
+	};
+
+	ifstream f("day9.txt");
+
+	int visited = 1; // the initial cell
+	Position position = Position::SAME_CELL;
+	set<Point> visited_cells;
+	Point current_location = { 0, 0 };
+	visited_cells.insert(current_location);
+
+	while (!f.eof())
+	{
+		char direction;
+		int count;
+
+		f >> direction >> count;
+		switch (direction)
+		{
+		case 'U':
+		{
+			for (int i = 0; i < count; i++)
+			{
+				switch(position)
+				{
+				case Position::SAME_CELL:
+					position = Position::TAIL_DOWN;
+					break;
+				case Position::TAIL_RIGHT:
+					position = Position::TAIL_DOWN_RIGHT;
+					break;
+				case Position::TAIL_RIGHT_UP:
+					position = Position::TAIL_RIGHT;
+					break;
+				case Position::TAIL_UP:
+					position = Position::SAME_CELL;
+					break;
+				case Position::TAIL_LEFT_UP:
+					position = Position::TAIL_LEFT;
+					break;
+				case Position::TAIL_LEFT:
+					position = Position::TAIL_LEFT_DOWN;
+					break;
+				case Position::TAIL_LEFT_DOWN:
+					position = Position::TAIL_DOWN;
+					current_location.x += 1;
+					current_location.y += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_DOWN:
+					current_location.y += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_DOWN_RIGHT:
+					position = Position::TAIL_DOWN;
+					current_location.y += 1;
+					current_location.x -= 1;
+					visited_cells.insert(current_location);
+					break;
+				}
+			}
+			break;
+		}
+		case 'D':
+		{
+			for (int i = 0; i < count; i++)
+			{
+				switch (position)
+				{
+				case Position::SAME_CELL:
+					position = Position::TAIL_UP;
+					break;
+				case Position::TAIL_RIGHT:
+					position = Position::TAIL_RIGHT_UP;
+					break;
+				case Position::TAIL_RIGHT_UP:
+					position = Position::TAIL_UP;
+					current_location.y -= 1;
+					current_location.x -= 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_UP:
+					current_location.y -= 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_LEFT_UP:
+					position = Position::TAIL_UP;
+					current_location.y -= 1;
+					current_location.x += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_LEFT:
+					position = Position::TAIL_LEFT_UP;
+					break;
+				case Position::TAIL_LEFT_DOWN:
+					position = Position::TAIL_LEFT;
+					break;
+				case Position::TAIL_DOWN:
+					position = Position::SAME_CELL;
+					break;
+				case Position::TAIL_DOWN_RIGHT:
+					position = Position::TAIL_RIGHT;
+					break;
+				}
+			}
+			break;
+		}
+		case 'L':
+		{
+			for (int i = 0; i < count; i++)
+			{
+				switch (position)
+				{
+				case Position::SAME_CELL:
+					position = Position::TAIL_RIGHT;
+					break;
+				case Position::TAIL_RIGHT:
+					position = Position::TAIL_RIGHT;
+					current_location.x -= 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_RIGHT_UP:
+					position = Position::TAIL_RIGHT;
+					current_location.y -= 1;
+					current_location.x -= 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_UP:
+					position = Position::TAIL_RIGHT_UP;
+					break;
+				case Position::TAIL_LEFT_UP:
+					position = Position::TAIL_UP;
+					break;
+				case Position::TAIL_LEFT:
+					position = Position::SAME_CELL;
+					break;
+				case Position::TAIL_LEFT_DOWN:
+					position = Position::TAIL_DOWN;
+					break;
+				case Position::TAIL_DOWN:
+					position = Position::TAIL_DOWN_RIGHT;
+					break;
+				case Position::TAIL_DOWN_RIGHT:
+					position = Position::TAIL_RIGHT;
+					current_location.y += 1;
+					current_location.x -= 1;
+					visited_cells.insert(current_location);
+					break;
+				}
+			}
+			break;
+		}
+		case 'R':
+		{
+			for (int i = 0; i < count; i++)
+			{
+				switch (position)
+				{
+				case Position::SAME_CELL:
+					position = Position::TAIL_LEFT;
+					break;
+				case Position::TAIL_RIGHT:
+					position = Position::SAME_CELL;
+					break;
+				case Position::TAIL_RIGHT_UP:
+					position = Position::TAIL_UP;
+					break;
+				case Position::TAIL_UP:
+					position = Position::TAIL_LEFT_UP;
+					break;
+				case Position::TAIL_LEFT_UP:
+					position = Position::TAIL_LEFT;
+					current_location.y -= 1;
+					current_location.x += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_LEFT:
+					position = Position::TAIL_LEFT;
+					current_location.x += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_LEFT_DOWN:
+					position = Position::TAIL_LEFT;
+					current_location.y += 1;
+					current_location.x += 1;
+					visited_cells.insert(current_location);
+					break;
+				case Position::TAIL_DOWN:
+					position = Position::TAIL_LEFT_DOWN;
+					break;
+				case Position::TAIL_DOWN_RIGHT:
+					position = Position::TAIL_DOWN;
+					break;
+				}
+			}
+			break;
+		}
+		}
+	}
+
+	return (int)visited_cells.size();
+}
 
 int assignment_8_2()
 {
@@ -32,7 +259,7 @@ int assignment_8_2()
 	}
 
 	int max = 0;
-	int field_size = map.size();
+	size_t field_size = map.size();
 
 	for (int i = 1; i < field_size - 1; i++)
 	{
@@ -118,8 +345,8 @@ int assignment_8_1()
 		row++;
 	}
 
-	int field_size = map.size();
-	int visible_num = 4 * field_size - 4;
+	size_t field_size = map.size();
+	size_t visible_num = 4 * field_size - 4;
 
 	for (int i = 1; i < field_size - 1; i++)
 	{
@@ -168,7 +395,7 @@ int assignment_8_1()
 	for (int i = 1; i < field_size - 1; i++)
 	{
 		int current_heigh = map[i][field_size - 1].heigh;
-		for (int j = field_size - 2; j > 0; j--)
+		for (size_t j = field_size - 2; j > 0; j--)
 		{
 			if (map[i][j].heigh > current_heigh)
 			{
@@ -190,7 +417,7 @@ int assignment_8_1()
 	for (int i = 1; i < field_size - 1; i++)
 	{
 		int current_heigh = map[field_size - 1][i].heigh;
-		for (int j = field_size - 2; j > 0; j--)
+		for (size_t j = field_size - 2; j > 0; j--)
 		{
 			if (map[j][i].heigh > current_heigh)
 			{
@@ -209,7 +436,7 @@ int assignment_8_1()
 		}
 	}
 
-	return visible_num;
+	return (int)visible_num;
 }
 
 // Assignment 7
@@ -666,6 +893,7 @@ int main()
 	cout << assignment_7(true) << endl; // 7_2
 	cout << assignment_8_1() << endl;
 	cout << assignment_8_2() << endl;
+	cout << assignment_9() << endl;
 
 	return 0;
 }
