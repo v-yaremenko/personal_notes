@@ -7,7 +7,67 @@
 #include <set>
 using namespace std;
 
-int assignment_9()
+void assignment_10_draw(const int current_cycle, const int X)
+{
+	if (current_cycle == 40 || current_cycle == 80 || current_cycle == 120 || current_cycle == 160 || current_cycle == 200 || current_cycle == 240)
+	{
+		cout << endl;
+	}
+
+	int current_draw_position = current_cycle % 40;
+	if (current_draw_position >= X - 1 && current_draw_position <= X + 1)
+	{
+		cout << "#";
+	}
+	else
+	{
+		cout << ".";
+	}
+}
+
+int assignment_10()
+{
+	ifstream f("day10.txt");
+
+	int answer = 0;
+	int X = 1;
+	int current_cycle = 0;
+
+	while (!f.eof())
+	{
+		string s;
+		f >> s;
+		if (s == "addx")
+		{
+			int value = 0;
+			f >> value;
+			
+			for (int i = 0; i < 2; i++)
+			{
+				assignment_10_draw(current_cycle, X);
+				current_cycle++;
+				if (current_cycle == 20 || current_cycle == 60 || current_cycle == 100 || current_cycle == 140 || current_cycle == 180 || current_cycle == 220)
+				{
+					answer += X * current_cycle;
+				}
+			}
+			X += value;
+		}
+		else
+		{
+			assignment_10_draw(current_cycle, X);
+			current_cycle++;
+			if (current_cycle == 20 || current_cycle == 60 || current_cycle == 100 || current_cycle == 140 || current_cycle == 180 || current_cycle == 220)
+			{
+				answer += X * current_cycle;
+			}
+		}
+	}
+
+	return answer;
+}
+
+int assignment_9(const int length)
 {
 	enum class Position
 	{
@@ -893,7 +953,9 @@ int main()
 	cout << assignment_7(true) << endl; // 7_2
 	cout << assignment_8_1() << endl;
 	cout << assignment_8_2() << endl;
-	cout << assignment_9() << endl;
+	cout << assignment_9(2) << endl;
+	cout << assignment_9(9) << endl; // Not finished
+	cout << assignment_10() << endl;
 
 	return 0;
 }
